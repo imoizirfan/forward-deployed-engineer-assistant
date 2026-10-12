@@ -16,7 +16,9 @@ Read `~/.config/fde-assistant/kit/shared/contract.md` and the profile. Writes no
 Budget: **≤ 6 tool calls, issued in parallel in one message**, then answer. Target 60–90 s. No doc reading.
 1. Pick 2–4 distinctive terms (screen, model, config key, event, endpoint).
 2. In parallel: `$K/bin/facts.sh <terms>`; `$K/bin/analogs.sh <terms>`; for tickets the tracker read tool on the
-   ticket (and parent) — load tracker tools via ToolSearch in the same message first; at most 2 `Read`s of the top hit.
+   ticket (and parent) — load tracker tools via ToolSearch in the same message first; at most 2 `Read`s of the top hit;
+   and one `grep -i -A3 '<capability or term>' $FDE_STORE_PATH/decisions.md $FDE_STORE_PATH/calibration.tsv` (memory
+   from /retro; missing files are fine).
 3. Answer with the card. If evidence is thin, say so and offer `/scope deep`.
 
 ### Verdict card (≤ 12 lines)
@@ -31,6 +33,8 @@ Depends on: <backend (client already has the endpoint? else "needs backend confi
 Blast radius: <shared screens/data>
 Ask in the room: 1) … 2) … (≤3 questions that would change the verdict)
 ```
+Memory: with ≥ 5 rows in calibration.tsv add "calibrated: your <S> took a median <n>d (n=<k>)" to the Size line; a
+matching decisions.md line becomes one extra line `Past decision: <date> <decision> (<id>)`.
 Rules: no claim without a path:line from this session; content driven by remote config or an API is called out (it may
 be a data change, not a release).
 
