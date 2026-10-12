@@ -17,10 +17,25 @@ task-id: <id> · ticket: <ticket> · parent: <id> · branch: - · lane: feature
 stage: grooming
 gate: none
 dor: not-ready
+size: -
 tracker: -
 decisions:
 pending:
+waiting:
 next: <one imperative line>
 log:
 - <yyyy-mm-dd> created by /groom
 ```
+
+Fields:
+- `lane`: `small | feature | bug`.
+- `stage`: `intake | diagnosing | grooming | ready | building | reviewing | done | released | blocked`.
+- `size`: the estimate given by /scope or /groom, as `S|M|L|XL (<days>)`. /retro compares it with the actual.
+- `waiting`: one line per external dependency, `- <who> · <what> · since <yyyy-mm-dd>`. A skill adds the line when
+  it asks someone for something (a posted question, a backend contract, a design) and deletes it when answered.
+  /fde reads these lines to show who you are blocked on and for how long.
+- Fields may share the first line separated by ` · ` (as above) or sit on their own lines; scripts accept both.
+
+Store-level files (outside change folders), written by /retro and read by /scope:
+`calibration.tsv` (estimate vs actual per change), `decisions.md` (product decisions by capability),
+`platform-feedback.md` (friction worth raising with the platform team).

@@ -9,5 +9,5 @@ FDE_HOME="${FDE_HOME:-$HOME/.config/fde-assistant}"
 : "${FDE_EXCLUDE:=:!*/node_modules/* :!*/vendor/* :!*.lock}"
 [ -n "${FDE_COMMIT_TAG_RE:-}" ] || FDE_COMMIT_TAG_RE='^\['
 [ -n "${FDE_TICKET_ID_RE:-}" ] || FDE_TICKET_ID_RE='\[([A-Za-z]+-?[0-9]+|[a-z0-9]{7,12})\]'
-: "${FDE_FACTS_FILE:=$FDE_HOME/facts.tsv}"
+: "${FDE_FACTS_FILE:=$FDE_HOME/facts.tsv}" "${FDE_GH_CMD:=gh}" "${FDE_STALE_DAYS:=3}"
 export OPENSPEC_TELEMETRY=0

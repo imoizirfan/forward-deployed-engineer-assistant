@@ -37,7 +37,8 @@ Read: `~/.config/fde-assistant/kit/shared/contract.md`, `shared/store.md`, `shar
      ## Out of scope (proposed)
      ```
    DoR: `ready` = no blocking Qs; `ready-with-assumptions` = every blocking Q has a recommended answer; else `not-ready`.
-6. `openspec validate <id> --store <store>`; fix format errors. Update status.md; commit the store; run
+6. `openspec validate <id> --store <store>`; fix format errors. Update status.md (incl. `size:` from Size & analogs);
+   commit the store; run
    `delta-check.sh check`.
 7. **Chat output only:** the DoR line, blocking questions (id + question + recommended answer), the folder path, and
    "next: /groom post <id>".
@@ -53,10 +54,11 @@ Proposed acceptance criteria: AC-1 … (one line each)
 Proposed out of scope: …
 ref fde:<ticket>:groom:v<n>
 ```
-Plain language, no file paths, no @-mentions. Then follow tracker-write.md exactly.
+Plain language, no file paths, no @-mentions. Then follow tracker-write.md exactly. After posting, add one
+`waiting:` line per owner with blocking questions (`- Product · Q1 Q3 · since <date>`).
 
 ## /groom settle <id>
 1. Read replies to the recorded comment plus answers the developer gives in chat; quote each with author.
 2. Update the Q-table, add dated `decisions:` lines, rewrite affected ACs (drop `(ASSUMPTION Qn)` when answered).
-3. Recompute DoR; when ready set `stage: ready`, `next: /qa cases <id>`. Validate; commit the store.
+3. Delete `waiting:` lines whose questions are all answered. Recompute DoR; when ready set `stage: ready`, `next: /qa cases <id>`. Validate; commit the store.
 4. Offer (don't post) a short "final ACs" comment via tracker-write.md.

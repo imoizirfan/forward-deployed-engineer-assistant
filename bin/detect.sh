@@ -48,6 +48,9 @@ signals="$(jq -n -c --argjson flags "$(cnt 'remoteconfig|remote_config|featurefl
   --argjson i18n "$(cnt 'localized|NSLocalizedString|i18n|t\(\"|getString\(R\.string')" \
   '{flags:$flags, analytics:$analytics, test_ids:$testids, i18n:$i18n}')"
 
+# release tags (newest first) for profile.release.tag_pattern
+tags="$(git tag --sort=-creatordate 2>/dev/null | head -10 | j)"
+
 # environment
 mcps="$(claude mcp list 2>/dev/null | sed -nE 's/^([A-Za-z0-9_.:-]+): .*/\1/p' | head -20 | j)"
 openspec_v="$(command -v openspec >/dev/null && openspec --version 2>/dev/null || echo "")"
@@ -58,12 +61,12 @@ jq -n -c --arg repo "$R" --arg name "$(basename "$R")" --argjson langs "$langs" 
   --arg prt "$pr_template" --argjson tests "$test_dirs" --argjson cs "$commit_samples" --argjson bs "$branch_samples" \
   --argjson bl "$bracket_lead" --argjson jira "$jira_ids" --argjson hashid "$hash_ids" --argjson ghr "$gh_refs" \
   --argjson variants "$variants" --argjson schemes "$url_schemes" --argjson signals "$signals" --argjson mcps "$mcps" \
-  --arg os "$openspec_v" --argjson gi "$gitignored_local" '
+  --arg os "$openspec_v" --argjson gi "$gitignored_local" --argjson tags "$tags" '
 {repo:$repo, name:$name, languages:$langs,
  base_branch:{origin_head:$head, present:$branches, develop_merges_90d:$merges},
  docs:{present:$docs, module_guides:$modules, candidates:$doccands, pr_template:$prt},
  tests:{dirs:$tests},
  commits:{samples:$cs, bracket_prefixed:$bl, jira_style_ids:$jira, hash_style_ids:$hashid, github_refs:$ghr, recent_branches:$bs},
  variants:{hints:$variants, url_schemes:$schemes},
- signals:$signals,
+ signals:$signals, release_tags:$tags,
  env:{mcp_servers:$mcps, openspec:$os, settings_local_gitignored:$gi}}'

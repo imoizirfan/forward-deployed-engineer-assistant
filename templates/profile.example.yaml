@@ -50,4 +50,17 @@ qa:
   mock_trackers: []                # test doubles for analytics assertions
   locator_catalog: ""              # where stable UI test identifiers are declared
 
+monitoring:                        # optional, read by /triage and /release check (MCP names from `claude mcp list`)
+  crash_mcp: ""                    # crash reporting, e.g. a Firebase/Crashlytics or Sentry MCP
+  analytics_mcp: ""                # event counts after launch
+  flag_tool: ""                    # where flags are flipped (a console name or an MCP); the assistant never flips them
+
+release:
+  tag_pattern: ""                  # ERE for release tags, e.g. "^v?[0-9]+\.[0-9]+\.[0-9]+$"; empty → no build lookup
+  notes_audience: "QA, product and support"   # who reads /release notes
+
+intake:
+  chat_mcp: ""                     # optional chat MCP (e.g. Slack) for reading a thread URL in /intake
+  default_list: ""                 # tracker list id where /intake proposes new tasks
+
 capabilities: []                   # product areas used to name spec folders, e.g. [home, search, checkout, auth]
