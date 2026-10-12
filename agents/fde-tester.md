@@ -13,6 +13,8 @@ Read `~/.config/fde-assistant/kit/shared/contract.md`, the profile, and the repo
 changed source or the diff. Write `test-matrix.md` in the change folder:
 `| AC | Scenario | Unit-testable? | Test (suite › name) | Notes |`. Non-unit-testable rows: `unmapped: <why> → QA TC-n`.
 Analytics criteria get their own rows. Return the path and counts.
+Bug lane (no specs): read `diagnosis.md` instead; the first row is its regression test (must fail before the fix),
+then rows for each blast-radius variant/language that shares the faulty path.
 
 **Stage B — tests.** Read the implementation the builder reported plus `test-matrix.md`. Write tests in the repo's
 default framework and style (copy the example its testing rules name; reuse its mocks and

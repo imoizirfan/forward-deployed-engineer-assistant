@@ -1,10 +1,10 @@
 ---
 name: ship
-description: Personal executor built on an OpenSpec store — plans (design + tasks), branches, implements via fde-builder, compiles once, pauses for the developer to run it, reconciles, adds tests via fde-tester, reviews via /review-branch, and stops at sign-off with the QA handoff and PR body. Lanes small and feature. `/ship archive <id>` after merge. Invoke explicitly only.
+description: Personal executor built on an OpenSpec store — plans (design + tasks), branches, implements via fde-builder, compiles once, pauses for the developer to run it, reconciles, adds tests via fde-tester, reviews via /review-branch, and stops at sign-off with the QA handoff and PR body. Lanes small, feature and bug (from /triage). `/ship archive <id>` after merge. Invoke explicitly only.
 disable-model-invocation: true
 ---
 
-# /ship <id> [--lane small|feature] · /ship archive <id>
+# /ship <id> [--lane small|feature|bug] · /ship archive <id>
 
 Read: `~/.config/fde-assistant/kit/shared/contract.md`, `shared/store.md`, `references/gates.md`, the profile.
 `K=~/.config/fde-assistant/kit`. Resume: grep status.md routing lines and continue at `stage`/`gate`.
@@ -14,10 +14,15 @@ Read: `~/.config/fde-assistant/kit/shared/contract.md`, `shared/store.md`, `refe
 - **small** — one sentence of intent, one area, an existing pattern. Create the change if missing: `proposal.md`
   (≤ 15 lines), `design.md` (≤ 10 lines), `tasks.md`; log `skip_specs: true` under decisions.
 - **feature** — needs `proposal.md` + `specs/` (from /groom) and `dor: ready`, or the developer says "override DoR" (logged).
+- **bug** — needs `diagnosis.md` from /triage with a proven root cause (`stage: ready`), or the developer says
+  "override diagnosis" (logged). No specs: the diagnosis is the contract. `design.md` (≤ 15 lines) restates the fix
+  and what must not change; tasks start with the regression test. Branch prefix per `profile.conventions.branch`
+  with the bug type; commit/PR type `BUG-FIX` (or the repo's equivalent).
 - fde-builder returns `SCOPE:` → stop, explain, offer to promote small → feature.
 
 ## Flow
-1. **Preconditions.** `openspec validate` (feature); proposal has Why / What Changes / Impact / Out of scope.
+1. **Preconditions.** `openspec validate` (feature); proposal has Why / What Changes / Impact / Out of scope;
+   bug lane: diagnosis.md has Root cause, Smallest safe fix and Regression test.
    `$K/bin/delta-check.sh snapshot <folder>/.delta`.
 2. **Plan.** `fde-scout` brief from the specs, then `design.md` + `tasks.md` from `openspec instructions design|tasks`
    (store rules apply): build order (file → existing file to copy → layer), expected changes marked `(exists)`/`(NEW)`
@@ -33,14 +38,20 @@ Read: `~/.config/fde-assistant/kit/shared/contract.md`, `shared/store.md`, `refe
 7. **Reconcile** decisions into the delta specs, marked `(DEV <date>)`; validate.
 8. **Tests** (default on when there's logic; skip visual-only with the reason logged): `fde-tester` Stage A (specs only)
    → then a separate Stage B dispatch. Run only the new/affected tests, once.
+   Bug lane: tests are never skipped. Stage A reads diagnosis.md; Stage B writes the regression test first. Prove it:
+   run it against the base (`git stash` is not allowed — run it on the fix commit with the fix lines reverted in a
+   scratch worktree, or state honestly that fail-before was not demonstrated).
 9. **Review**: `/review-branch --change <id>`. **■ GATE triage** — accept/decline per finding; nits hidden unless asked.
 10. **Fix accepted items** (product code → builder; test → tester, citing the scenario). Focused tests + one compile. One round.
-11. **■ GATE sign-off** (hard): built vs not built (per AC), what actually ran (never claim unrun steps), docs updates;
+11. **■ GATE sign-off** (hard): built vs not built (per AC; bug lane: the diagnosis' fix and regression test, with
+    fail-before / pass-after evidence), what actually ran (never claim unrun steps), docs updates;
     the `/qa handoff` text and a PR body from `profile.repo.knowledge.pr_template`, title per `profile.conventions.pr_title`.
     Commit / push / PR only when the developer says so, with the exact message shown first.
 12. `stage: done`; commit the store.
 
 ## /ship archive <id>
-After merge: `openspec archive <id> --store <store> --yes --skip-specs`; commit the store.
+After merge. If the change is behind a flag or the diagnosis has an "After release, watch" section and there is no
+`rollout.md`, offer `/release plan <id>` first. Then offer `/retro <id>` (it needs the change before archiving).
+Then `openspec archive <id> --store <store> --yes --skip-specs`; commit the store.
 
 Only this main session compiles or runs tests — never the agents, never one build per item.
