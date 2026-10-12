@@ -1,0 +1,33 @@
+schema: spec-driven
+
+context: |
+  Personal FDE Assistant store. The product repo's own docs (see ~/.config/fde-assistant/profile.yaml → repo.knowledge)
+  are the source of truth — cite them, never restate conventions here. Every code claim carries a grep-verified path:line.
+  Change ids are <ticket>-<slug>. Artifacts in this store are never copied into the product repo.
+
+rules:
+  proposal:
+    - "Sections: Why, What Changes, Capabilities, Impact, Out of scope. Impact names every variant (brand/tenant/region) and language affected, or why a subset."
+    - "Name the ticket, parent and sibling ticket ids."
+  specs:
+    - "Title requirements by behaviour, never by ticket or AC number."
+    - "Put AC ids in metadata: '**AC**: AC-n'. Mark assumption-backed criteria '(ASSUMPTION Qn)'."
+    - "Scenarios use GIVEN/WHEN/THEN and carry a [variant, language] tag."
+    - "Cover analytics explicitly: event + params, or 'Analytics: none (confirmed by <who>)'."
+  design:
+    - "Build order as: file -> existing file to copy -> layer."
+    - "Mark every expected change '(exists)' or '(NEW)' after grep verification."
+    - "Call out any public API / interface signature change."
+    - "Soft limit 8 KB."
+  tasks:
+    - "Format: '- [ ] N.M <task> — verify: <how> (AC-n)'."
+    - "Add a UI-test-identifier task for every element named in qa-cases automation needs."
+
+operations:
+  apply:
+    guidance:
+      - "Edits go in the product repo's source/tests/docs, NOT only in this store."
+      - "No builds, tests or git from the builder; the main session compiles once."
+  archive:
+    guidance:
+      - "Use --skip-specs until living specs are adopted."

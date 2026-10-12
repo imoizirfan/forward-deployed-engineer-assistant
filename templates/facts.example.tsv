@@ -1,0 +1,10 @@
+# bin/facts.sh extra sections. One per line, TAB-separated:
+# title	pathspecs (space-separated git pathspecs)	line filter (ERE, optional)	mode: lines | files | count
+# Built-in sections always run first: source files by hits, paths that match, constants holding the term.
+Endpoints / routes	*.swift *.kt *.ts *.py *.go	(route|router|endpoint|path|url|"/api|/v[0-9]/)	lines
+Feature flags / remote config	*.swift *.kt *.ts *.py *.go	(flag|remoteconfig|remote_config|getValue|isEnabled|featureToggle)	lines
+Analytics	*.swift *.kt *.ts *.py *.go	(track|analytics|logEvent|event)	lines
+UI test identifiers	*.swift *.kt *.ts *.tsx	(accessibilityIdentifier|testID|data-testid|contentDescription)	lines
+Deep links	*.swift *.kt *.ts	(deeplink|deep_link|universal ?link|url ?scheme)	lines
+Public surface	*Factory* *Module* *Api* index.ts	.	lines
+Localization catalogs	*.xcstrings *.strings *.xml *.json *.po		files

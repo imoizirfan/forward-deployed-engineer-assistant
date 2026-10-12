@@ -1,0 +1,53 @@
+# FDE Assistant — repo profile read by the skills. Lives at ~/.config/fde-assistant/profile.yaml.
+# The only place repo-specific facts live. Skills read this; they never copy the repo's conventions.
+
+repo:
+  name: your-app
+  path: ~/code/your-app
+  base_branch: develop
+  knowledge:                       # read at runtime and cited, never paraphrased into artifacts
+    root: AGENTS.md                # or CLAUDE.md / CONTRIBUTING.md — the routing doc agents start from
+    modules: "*/AGENTS.md"         # per-module guides, if any
+    coding_rules: docs/CODING.md   # read in full by the builder and reviewer
+    testing_rules: docs/TESTING.md # read in full by the tester
+    build_doc: docs/BUILD.md       # how to compile the narrowest target
+    analytics_doc: ""              # where analytics conventions live
+    qa_handoff_format: ""          # optional: a file describing your QA message format
+    pr_template: .github/pull_request_template.md
+  lsp: none                        # "none" → verify every symbol by grep
+
+variants: {}                       # brands / tenants / regions / flavours, e.g.
+#  US: {name: Acme US, languages: [en], deep_link_scheme: acme-us}
+#  AE: {name: Acme UAE, languages: [en, ar], deep_link_scheme: acme-ae}
+behaviour_classes: {}              # starting groups for QA; /qa refines them from real code branches
+#  MENA: [AE, SA]
+
+conventions:
+  branch: "feature/<ticket>-<slug>"
+  commit: "[FEATURE|BUG-FIX|REFACTORING][<ticket>] <Message>"
+  pr_title: "[FEATURE|BUG-FIX|REFACTORING][<ticket>] <Message>"
+  ai_attribution: never            # never | allowed
+
+tracker:
+  kind: clickup                    # clickup | linear | jira | github | none
+  mcp: ""                          # MCP server name for the tracker, as shown by `claude mcp list`
+  workspace_id: ""
+  space_id: ""
+  sprints_folder_id: ""            # sprints as lists in a folder; or leave empty
+  task_prefix: ""                  # e.g. "[IOS]" when platform subtasks carry a prefix
+  sibling_prefixes: []             # e.g. ["[Android]", "[Web]"]
+  spec_lives_on: parent            # parent | self — where the product spec is written
+  custom_fields: []                # fields worth reading, e.g. [Tenant, Remote Config, Test Cases]
+  write_policy: draft-local-confirm-exact-text
+
+qa:
+  runner: none                     # ios-simulator | android-emulator | browser | none
+  mcp:                             # optional QA workbench MCP; map its tool names here
+    name: ""
+    tools: {list_recordings: "", get_recording: "", list_tests: "", get_test: "", save_test: "",
+            run_tests: "", get_report: "", list_devices: "", network_status: "", list_traffic: "", get_flow_body: ""}
+    never_run_categories: []       # e.g. ["Live API"] — real-backend suites the developer runs by hand
+  mock_trackers: []                # test doubles for analytics assertions
+  locator_catalog: ""              # where stable UI test identifiers are declared
+
+capabilities: []                   # product areas used to name spec folders, e.g. [home, search, checkout, auth]
