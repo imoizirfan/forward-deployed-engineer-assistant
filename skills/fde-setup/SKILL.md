@@ -42,6 +42,12 @@ Derive, don't ask, when evidence is clear:
   conventions from samples (`feature/<ticket>-<slug>` etc.).
 - variants from scheme/target/flavor hints and URL schemes (strip helper targets: extensions, scaffolds, tests).
 - docs mapping from step 1.
+- `release.tag_pattern` from `release_tags` (e.g. `release_us_v2.4.0` → `^release_[a-z]+_v[0-9]+\.[0-9]+\.[0-9]+$`); none → empty.
+- `monitoring.crash_mcp` / `analytics_mcp` and `intake.chat_mcp` from `env.mcp_servers` when exactly one server
+  clearly fits (crash: firebase/crashlytics/sentry/bugsnag; analytics: firebase/amplitude/mixpanel; chat:
+  slack/teams). Several candidates → ask; none → leave empty (those features fall back to manual checklists).
+- `FDE_GH_CMD`: `gh` if `gh auth status` succeeds for the repo's host and `gh repo view` works inside the repo;
+  otherwise ask which command reaches it (e.g. an `env GH_CONFIG_DIR=… gh` prefix for a second account).
 
 Ask with **AskUserQuestion** (≤ 4 questions per call, recommended option first, label "(Recommended)") only for:
 1. **Tracker** — options from detected MCP servers (ClickUp, Linear, Jira/Atlassian, …) + "None". With ClickUp
@@ -72,4 +78,4 @@ Show the three files (or a diff against the existing ones) in full, in chat. Ask
 - Smoke: `$K/bin/facts.sh <a term from the newest feature commit>` (expect source hits); `$K/bin/analogs.sh <same term>`
   (expect ≥1 row, which proves the commit-title regex); `$K/bin/mcp-check.sh` if a QA MCP was configured.
 - Report: what was detected (with evidence), what the user chose, what's left as `TODO(confirm)`, and the next
-  commands to try: `/scope <a question>` and `/groom <ticket>`. Remind them to restart Claude Code if skills were just linked.
+  commands to try: `/scope <a question>`, `/groom <ticket>`, `/fde` (board) and `/pr-feedback` on an open PR. Remind them to restart Claude Code if skills were just linked.

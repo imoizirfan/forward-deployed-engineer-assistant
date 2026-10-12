@@ -10,7 +10,7 @@ CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 SETTINGS="$CLAUDE_DIR/settings.json"
 HOOK="$FDE_HOME/kit/hooks/qa-run-guard.sh"
 STATE="$FDE_HOME/.installed.json"   # what this installer added to settings.json, so uninstall removes only that
-SKILLS=(fde-setup scope groom qa ship review-branch)
+SKILLS=(fde-setup scope groom qa ship review-branch triage release intake fde pr-feedback retro)
 AGENTS=(fde-scout fde-builder fde-tester fde-reviewer)
 say() { printf '%s\n' "$*"; }
 need() { command -v "$1" >/dev/null 2>&1; }
@@ -40,6 +40,11 @@ check() {
   else say "  openspec  not installed (needed by /groom /qa /ship): npm i -g @fission-ai/openspec"; ok=0; fi
   need jq || { say "  jq missing"; ok=0; }
   [ -n "${FDE_QA_MCP:-}" ] && say "  qa mcp    $FDE_QA_MCP (guard on mcp__${FDE_QA_MCP}__${FDE_QA_RUN_TOOL:-run_tests})" || say "  qa mcp    none configured (optional)"
+  for k in crash_mcp analytics_mcp chat_mcp; do
+    v="$(sed -nE "s/^[[:space:]]*$k:[[:space:]]*\"?([^\"#]*)\"?.*/\1/p" "$FDE_HOME/profile.yaml" 2>/dev/null | head -1 | sed 's/[[:space:]]*$//')"
+    [ -n "$v" ] && say "  $k $v" || say "  $k none (optional)"
+  done
+  need "${FDE_GH_CMD%% *}" && say "  gh        $FDE_GH_CMD" || say "  gh        '$FDE_GH_CMD' not found (needed by /pr-feedback)"
   [ "$ok" = 1 ] && say "OK" || { say "Some items need attention."; return 1; }
 }
 

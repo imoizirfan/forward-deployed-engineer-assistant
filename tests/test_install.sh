@@ -8,6 +8,7 @@ pass=0; fail=0; ok() { if eval "$2"; then pass=$((pass+1)); else fail=$((fail+1)
 ok "config created"   '[ -f "$FDE_HOME/config.env" ] && [ -f "$FDE_HOME/profile.yaml" ] && [ -f "$FDE_HOME/facts.tsv" ]'
 ok "kit link"         '[ "$(readlink "$FDE_HOME/kit")" = "$KIT" ]'
 ok "skills linked"    '[ -L "$CLAUDE_CONFIG_DIR/skills/fde-setup" ] && [ -L "$CLAUDE_CONFIG_DIR/skills/groom" ] && [ -L "$CLAUDE_CONFIG_DIR/agents/fde-reviewer.md" ]'
+ok "v2 skills"        '( for k in triage release intake fde pr-feedback retro; do [ -L "$CLAUDE_CONFIG_DIR/skills/$k" ] || exit 1; done )'
 ok "telemetry env"    '[ "$(jq -r .env.OPENSPEC_TELEMETRY "$CLAUDE_CONFIG_DIR/settings.json")" = 0 ]'
 ok "user hook kept"   '[ "$(jq -r ".hooks.PreToolUse[0].matcher" "$CLAUDE_CONFIG_DIR/settings.json")" = Bash ]'
 ok "model kept"       '[ "$(jq -r .model "$CLAUDE_CONFIG_DIR/settings.json")" = sonnet ]'
@@ -21,7 +22,7 @@ ok "suppressed"       '[ "$(jq -r .skillOverrides.mission "$CLAUDE_CONFIG_DIR/se
 rm "$CLAUDE_CONFIG_DIR/skills/qa"; mkdir "$CLAUDE_CONFIG_DIR/skills/qa"; ./install.sh >/dev/null 2>&1
 ok "no clobber"       '[ -d "$CLAUDE_CONFIG_DIR/skills/qa" ] && [ ! -L "$CLAUDE_CONFIG_DIR/skills/qa" ]'
 ./install.sh --uninstall >/dev/null 2>&1
-ok "unlinked"         '[ ! -e "$CLAUDE_CONFIG_DIR/skills/groom" ]'
+ok "unlinked"         '[ ! -e "$CLAUDE_CONFIG_DIR/skills/groom" ] && [ ! -e "$CLAUDE_CONFIG_DIR/skills/retro" ]'
 ok "guard removed"    '[ "$(jq "[.hooks.PreToolUse[]? | select(.matcher==\"mcp__workbench__run_tests\")] | length" "$CLAUDE_CONFIG_DIR/settings.json")" = 0 ]'
 ok "override removed" '[ "$(jq -r ".skillOverrides.mission // \"gone\"" "$CLAUDE_CONFIG_DIR/settings.json")" = gone ]'
 ok "user hook kept 2" '[ "$(jq -r ".hooks.PreToolUse[0].matcher" "$CLAUDE_CONFIG_DIR/settings.json")" = Bash ]'
