@@ -31,6 +31,10 @@ Read: `~/.config/fde-assistant/kit/shared/contract.md`, `shared/store.md`, `refe
 3. **Branch** from `profile.repo.base_branch` (`git fetch origin <base>` → `git switch -c <name> origin/<base>`), name
    per `profile.conventions.branch`; confirm once. Dirty tree → stop and ask; never stash or discard.
 4. **Implement** with `fde-builder` (change id, folder, task range). Then `delta-check.sh check`.
+   **4b. Bug lane — regression test first.** Before the builder runs: `fde-tester` Stage A from diagnosis.md, then a
+   Stage B dispatch limited to the regression test. Run that one test: it must fail for the diagnosed reason (log the
+   failure line). Then the builder applies the fix and the test must pass after the compile in step 5. If it passes
+   before the fix, the diagnosis is wrong — stop and go back to /triage.
 5. **Compile once** — narrowest target per `profile.repo.knowledge.build_doc`. Errors back to the builder once; the same
    failure twice → stop.
 6. **■ CHECKPOINT run** — the developer runs it. Approve / Changes (batched; one builder round + one compile per round)
@@ -38,9 +42,7 @@ Read: `~/.config/fde-assistant/kit/shared/contract.md`, `shared/store.md`, `refe
 7. **Reconcile** decisions into the delta specs, marked `(DEV <date>)`; validate.
 8. **Tests** (default on when there's logic; skip visual-only with the reason logged): `fde-tester` Stage A (specs only)
    → then a separate Stage B dispatch. Run only the new/affected tests, once.
-   Bug lane: tests are never skipped. Stage A reads diagnosis.md; Stage B writes the regression test first. Prove it:
-   run it against the base (`git stash` is not allowed — run it on the fix commit with the fix lines reverted in a
-   scratch worktree, or state honestly that fail-before was not demonstrated).
+   Bug lane: tests are never skipped, and the order changes — see step 4b.
 9. **Review**: `/review-branch --change <id>`. **■ GATE triage** — accept/decline per finding; nits hidden unless asked.
 10. **Fix accepted items** (product code → builder; test → tester, citing the scenario). Focused tests + one compile. One round.
 11. **■ GATE sign-off** (hard): built vs not built (per AC; bug lane: the diagnosis' fix and regression test, with
